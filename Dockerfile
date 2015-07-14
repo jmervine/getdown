@@ -22,6 +22,7 @@ RUN set -x; \
   go build -v -o getdown && \
   cp getdown $GOBIN && \
   apk del curl git mercurial bzr go && \
+  cp /tmp/getdown/README.md /data/README.md && \
   rm -rf /tmp/getdown
 
 WORKDIR $GETDOWN_BASEDIR
