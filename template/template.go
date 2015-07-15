@@ -52,7 +52,9 @@ var Template = `<!DOCTYPE html>
 
     <hr>
     <footer>
-        <div class="text-center"><a href="http://github.com/jmervine/getdown">gitdown on github</a></div>
+        <div class="text-center">
+            built by <a href="http://github.com/jmervine/getdown">gitdown</a>
+        </div>
     </footer>
   </body>
 </html>

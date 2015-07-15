@@ -12,6 +12,7 @@ type Config struct {
 	Basedir string
 	Index   string
 	Style   string
+	Title   string
 }
 
 func (c Config) Listener() string {
@@ -39,6 +40,12 @@ func Parse(args []string) (config Config) {
 			EnvVar: "GETDOWN_PORT",
 		},
 		cli.StringFlag{
+			Name:   "title, t",
+			Value:  "getdown",
+			Usage:  "rendered page title/header, pass empty string to use basedir name",
+			EnvVar: "GETDOWN_TITLE",
+		},
+		cli.StringFlag{
 			Name:   "basedir, b",
 			Value:  ".",
 			Usage:  "base markdown directory",
@@ -64,6 +71,7 @@ func Parse(args []string) (config Config) {
 		config.Basedir = c.String("basedir")
 		config.Index = c.String("index")
 		config.Style = c.String("style")
+		config.Title = c.String("title")
 
 		if config.Addr == "" || config.Port == "" || config.Basedir == "" || config.Index == "" {
 			cli.ShowAppHelp(c)

@@ -8,8 +8,8 @@ docker run -p 3000:3000 -v /path/to/markdown:/data jmervine/getdown
 
 # custom config example
 docker run -p 3000:3000 -v /path/to/markdown:/data \
+    -e GETDOWN_TITLE="My Project Docs" \
     -e GETDOWN_STYLE="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/flatly/bootstrap.min.css" \
-    -e GETDWON_INDEX="readme.md" \
     jmervine/getdown
 ```
 
@@ -36,6 +36,8 @@ GLOBAL OPTIONS:
          listener address [$GETDOWN_ADDR]
     --port, -p '3000'
          listener port [$GETDOWN_PORT]
+    --title, -t 'getdown'
+         rendered page title/header, pass empty string to use basedir name [$GETDOWN_TITLE]
     --basedir, -b '.'
          base markdown directory [$GETDOWN_BASEDIR]
     --index, -i 'README.md'

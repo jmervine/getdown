@@ -5,9 +5,11 @@ MAINTAINER Joshua Mervine <joshua@mervine.net>
 ENV GETDOWN_ADDR     0.0.0.0
 ENV GETDOWN_PORT     3000
 ENV GETDOWN_BASEDIR  /data
-#ENV GETDOWN_INDEX    README.md
-#ENV GETDOWN_STYLE    https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css
+ENV GETDOWN_INDEX    README.md
+ENV GETDOWN_STYLE    https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css
+ENV GETDOWN_TITLE    getdown
 
+# build env vars
 ENV GOROOT /usr/lib/go
 ENV GOPATH /gopath
 ENV GOBIN /gopath/bin
