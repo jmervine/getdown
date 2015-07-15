@@ -6,6 +6,22 @@ import (
 	"os"
 )
 
+// slightly modified version of
+// https://github.com/codegangsta/cli/blob/v1.2.0/help.go#L13
+var AppHelpTemplate = `Name:
+    {{.Name}} - {{.Usage}}
+
+Usage:
+    {{.Usage}} [args...]
+
+Version:
+    {{.Version}}
+
+Options:
+    {{range .Flags}}{{.}}
+    {{end}}
+`
+
 type Config struct {
 	Port    string
 	Addr    string
@@ -20,6 +36,9 @@ func (c Config) Listener() string {
 }
 
 func Parse(args []string) (config Config) {
+	// use custom help template
+	cli.AppHelpTemplate = AppHelpTemplate
+
 	app := cli.NewApp()
 
 	app.Version = "0.0.1"
