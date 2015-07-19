@@ -1,61 +1,61 @@
 package template
 
-var Template = `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+import (
+	"io"
+	"os"
+	"path"
+	"path/filepath"
+	"strings"
+	"text/template"
 
-    <title>{{.Title}}</title>
+	"github.com/jmervine/getdown/config"
+	"github.com/jmervine/getdown/markdown"
+)
 
-    <link href="{{.Style}}" rel="stylesheet">
+// wrapper for additional template handling later
+func NewTemplate(file string) (*template.Template, error) {
+	return template.ParseFiles(file)
+}
 
-    <style>
-        body { margin: 75px }
-        ul { list-style-type: none; }
-    </style>
-  </head>
+// Payload is the type definition for the rendered template.
+type Payload struct {
+	template *template.Template
+	markdown *markdown.Markdown
+	Title    string
+	Style    string
+	Body     string
+	Files    map[string][]string
+}
 
-  <body role="document">
+func NewPayload(cfg *config.Config, md *markdown.Markdown) (payload Payload, err error) {
+	tmpl, err := NewTemplate(cfg.Template)
+	if err != nil {
+		return
+	}
 
-    <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="#">{{.Title}}</a>
-        </div>
-      </div>
-    </nav>
+	payload = Payload{
+		template: tmpl,
+		markdown: md,
+		Title:    cfg.Title,
+		Style:    cfg.Style,
+		Body:     md.Body,
+		Files:    make(map[string][]string),
+	}
 
-    <div class="container-fluid" role="main">
-        <div class="row">
-            <div class="col-md-3">
-                <h3>Navigation</h3>
-                <hr/>
-                {{ $path := .Path }}
-                {{ range $dir, $files := .Files }}
-                <h5>{{$dir}}</h5>
-                <ul>
-                    {{ range $i, $file := $files }}
-                    {{ $this := print $dir $file }}
-                    <li{{ if eq $path $this }} class="active"{{ end }}><a href="{{$dir}}{{$file}}">{{$file}}</a></li>
-                    {{ end }}
-                </ul>
-                {{ end }}
-            </div>
-            <div class="col-md-9">
-                {{.Body}}
-            </div>
-        </div>
-    </div> <!-- /container -->
+	walk := func(p string, f os.FileInfo, err error) error {
+		if markdown.IsMarkdown(p) {
+			p = strings.TrimPrefix(p, cfg.Basedir)
+			dir, name := path.Split(p)
+			payload.Files[dir] = append(payload.Files[dir], name)
+		}
+		return nil
+	}
 
-    <hr>
-    <footer>
-        <div class="text-center">
-            built by <a href="http://github.com/jmervine/getdown">gitdown</a>
-        </div>
-    </footer>
-  </body>
-</html>
-`
+	filepath.Walk(cfg.Basedir, walk)
+
+	return
+}
+
+func (payload Payload) Render(w io.Writer) {
+	payload.template.ExecuteTemplate(w, payload.markdown.Path, payload)
+}

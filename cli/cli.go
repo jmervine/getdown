@@ -1,9 +1,10 @@
 package cli
 
 import (
-	"fmt"
 	"gopkg.in/codegangsta/cli.v1"
 	"os"
+
+	"github.com/jmervine/getdown/config"
 )
 
 // slightly modified version of
@@ -22,20 +23,7 @@ Options:
     {{end}}
 `
 
-type Config struct {
-	Port    string
-	Addr    string
-	Basedir string
-	Index   string
-	Style   string
-	Title   string
-}
-
-func (c Config) Listener() string {
-	return fmt.Sprintf("%s:%s", c.Addr, c.Port)
-}
-
-func Parse(args []string) (config Config) {
+func Parse(args []string) *config.Config {
 	// use custom help template
 	cli.AppHelpTemplate = AppHelpTemplate
 
@@ -48,51 +36,61 @@ func Parse(args []string) (config Config) {
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:   "addr, a",
-			Value:  "localhost",
+			Value:  config.Default.Addr,
 			Usage:  "listener address",
 			EnvVar: "GETDOWN_ADDR",
 		},
 		cli.StringFlag{
 			Name:   "port, p",
-			Value:  "3000",
+			Value:  config.Default.Port,
 			Usage:  "listener port",
 			EnvVar: "GETDOWN_PORT",
 		},
 		cli.StringFlag{
-			Name:   "title, t",
-			Value:  "getdown",
-			Usage:  "rendered page title/header, pass empty string to use basedir name",
-			EnvVar: "GETDOWN_TITLE",
-		},
-		cli.StringFlag{
 			Name:   "basedir, b",
-			Value:  ".",
+			Value:  config.Default.Basedir,
 			Usage:  "base markdown directory",
 			EnvVar: "GETDOWN_BASEDIR",
 		},
 		cli.StringFlag{
 			Name:   "index, i",
-			Value:  "README.md",
+			Value:  config.Default.Index,
 			Usage:  "root file default",
 			EnvVar: "GETDOWN_INDEX",
 		},
 		cli.StringFlag{
+			Name:   "template, T",
+			Value:  config.Default.Template,
+			Usage:  "path to html template",
+			EnvVar: "GETDOWN_TEMPLATE",
+		},
+		cli.StringFlag{
+			Name:   "title, t",
+			Value:  config.Default.Title,
+			Usage:  "rendered page title/header for default template",
+			EnvVar: "GETDOWN_TITLE",
+		},
+		cli.StringFlag{
 			Name:   "style",
-			Value:  "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css",
+			Value:  config.Default.Style,
 			Usage:  "bootstrap compatable stylesheet url",
 			EnvVar: "GETDOWN_STYLE",
 		},
 	}
 
+	var cfg config.Config
 	app.Action = func(c *cli.Context) {
-		config.Addr = c.String("addr")
-		config.Port = c.String("port")
-		config.Basedir = c.String("basedir")
-		config.Index = c.String("index")
-		config.Style = c.String("style")
-		config.Title = c.String("title")
+		cfg = config.Config{
+			Addr:     c.String("addr"),
+			Port:     c.String("port"),
+			Basedir:  c.String("basedir"),
+			Index:    c.String("index"),
+			Template: c.String("template"),
+			Title:    c.String("title"),
+			Style:    c.String("style"),
+		}
 
-		if config.Addr == "" || config.Port == "" || config.Basedir == "" || config.Index == "" {
+		if cfg.Addr == "" || cfg.Port == "" || cfg.Basedir == "" || cfg.Index == "" {
 			cli.ShowAppHelp(c)
 			os.Exit(1)
 		}
@@ -100,5 +98,5 @@ func Parse(args []string) (config Config) {
 
 	app.Run(args)
 
-	return
+	return &cfg
 }
