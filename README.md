@@ -50,3 +50,46 @@ GLOBAL OPTIONS:
          print the version
 ```
 
+### development
+
+Fork and ...
+
+```
+git clone git@github.com/<you>/getdown.git
+```
+
+#### With Docker
+
+> Why?
+>
+> Docker ensures a clean environment and that Godep's work correctly. Additionally it allows you to test changes without changing import pathing from "github.com/jmervine/getdown/..." to include your github username
+>
+
+**Running**
+
+```
+go get github.com/jmervine/dockme
+dockme
+```
+
+**Running Tests**
+
+```
+go get github.com/jmervine/dockme
+dockme -C Dockme.test.yml
+```
+
+#### Without Docker
+
+**Running**
+
+```
+go run main.go
+```
+
+**Running Tests**
+
+```
+go test ./...
+```
+

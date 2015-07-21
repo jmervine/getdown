@@ -1,0 +1,42 @@
+{
+	"ImportPath": "github.com/jmervine/getdown",
+	"GoVersion": "go1.3.3",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "code.google.com/p/go.net/html",
+			"Comment": "null-240",
+			"Rev": "937a34c9de13c766c814510f76bca091dee06028"
+		},
+		{
+			"ImportPath": "github.com/microcosm-cc/bluemonday",
+			"Rev": "cb3660f44463dfacda51a0bfdd6b7524c22e2ecb"
+		},
+		{
+			"ImportPath": "golang.org/x/net/html",
+			"Rev": "d9558e5c97f85372afee28cf2b6059d7d3818919"
+		},
+		{
+			"ImportPath": "gopkg.in/codegangsta/cli.v1",
+			"Comment": "1.2.0",
+			"Rev": "565493f259bf868adb54d45d5f4c68d405117adf"
+		},
+		{
+			"ImportPath": "gopkg.in/jmervine/GoT.v1",
+			"Comment": "v1",
+			"Rev": "ffdd9e44910a762e6410b7a6f4c8c7b506b4daeb"
+		},
+		{
+			"ImportPath": "gopkg.in/jmervine/ll.v1",
+			"Comment": "v1",
+			"Rev": "59bb1437afd5fbf7fdb49108c57be4f1fac1c101"
+		},
+		{
+			"ImportPath": "gopkg.in/russross/blackfriday.v1",
+			"Comment": "v1.2",
+			"Rev": "2e7d690972283d45aadc7a5ea304841e26529433"
+		}
+	]
+}

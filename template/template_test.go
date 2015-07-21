@@ -6,7 +6,7 @@ import (
 
 	//"github.com/jmervine/getdown/config"
 
-	. "gopkg.in/jmervine/GoT.v1"
+	. "github.com/jmervine/getdown/Godeps/_workspace/src/gopkg.in/jmervine/GoT.v1"
 )
 
 const TEMPLATE = "../template.html"

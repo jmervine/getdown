@@ -1,64 +1,37 @@
 package server
 
 import (
-	"log"
+	"fmt"
 	"net/http"
-	//"os"
 	"time"
+
+	"github.com/jmervine/getdown/Godeps/_workspace/src/gopkg.in/jmervine/ll.v1"
 
 	"github.com/jmervine/getdown/config"
 	"github.com/jmervine/getdown/markdown"
 	"github.com/jmervine/getdown/template"
 )
 
-// Allow for overite of default logging fucntion when
-// testing. Exporting to allow for other logging functions
-// as well.
-var LogF = log.Printf
-
-// Logger provides a good loggging mechanism.
-func Logger(at, meth string, stat int, url string, begin *time.Time, meta interface{}) {
-	var metaLabel string
-	var metaValue string
-
-	switch m := meta.(type) {
-	case string:
-		metaLabel = "source"
-		metaValue = m
-	case error:
-		metaLabel = "error"
-		metaValue = "\"" + m.Error() + "\""
-	}
-
-	str := "at=%s method=%s status=%d %s=%v url=%s"
-	if begin != nil { // mostly for testing
-		str = str + " duration=%s\n"
-		LogF(str, at, meth, stat, metaLabel, metaValue, url, time.Since(*begin))
-	} else {
-		str = str + "\n"
-		LogF(str, at, meth, stat, metaLabel, metaValue, url)
-	}
-}
-
-// FileServerWithLogger does what you would expect.
-func FileServerWithLogger(begin *time.Time, cfg *config.Config) http.HandlerFunc {
-	handler := func(w http.ResponseWriter, r *http.Request) {
-		http.FileServer(http.Dir(cfg.Basedir)).ServeHTTP(w, r)
-		Logger("request", r.Method, 200, r.URL.Path, begin, "static")
-	}
-
-	return http.HandlerFunc(handler)
-}
-
 // Bind http server.
 func Bind(cfg *config.Config) *http.Server {
+	ll.Debug(nil, map[string]interface{}{
+		"at":  "server.Bind",
+		"cfg": fmt.Sprintf("%+v", *cfg),
+	})
+
 	handler := func(w http.ResponseWriter, r *http.Request) {
 		now := time.Now()
 		begin := &now
 
+		ll.Debug(nil, map[string]interface{}{
+			"at":      "server.Bind #handler",
+			"request": fmt.Sprintf("%+v", *r),
+		})
+
 		md, err := markdown.New(r.URL.Path, cfg)
 		if err != nil {
 			// serve static
+			// see: server/file_server.go
 			FileServerWithLogger(begin, cfg).ServeHTTP(w, r)
 			return
 		}
@@ -66,16 +39,35 @@ func Bind(cfg *config.Config) *http.Server {
 		payload, err := template.NewPayload(cfg, &md)
 		if err != nil {
 			// handle error
-			Logger("request", r.Method, 500, r.URL.Path, begin, err)
+			ll.Log(begin, map[string]interface{}{
+				"at":     "request",
+				"method": r.Method,
+				"status": 500,
+				"url":    r.URL.Path,
+				"error":  err,
+			})
 			return
 		}
 
 		payload.Render(w)
-		Logger("request", r.Method, 200, r.URL.Path, begin, md.Path)
+		ll.Log(begin, map[string]interface{}{
+			"at":     "request",
+			"method": r.Method,
+			"status": 200,
+			"url":    r.URL.Path,
+			"source": md.Path,
+		})
 	}
 
-	return &http.Server{
+	svr := &http.Server{
 		Addr:    cfg.Listener(),
 		Handler: http.HandlerFunc(handler),
 	}
+
+	ll.Debug(nil, map[string]interface{}{
+		"at":  "server.Bind",
+		"svr": fmt.Sprintf("%+v", *svr),
+	})
+
+	return svr
 }

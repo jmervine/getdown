@@ -4,8 +4,8 @@ import (
 	"os"
 	"testing"
 
+	. "github.com/jmervine/getdown/Godeps/_workspace/src/gopkg.in/jmervine/GoT.v1"
 	"github.com/jmervine/getdown/config"
-	. "gopkg.in/jmervine/GoT.v1"
 )
 
 func TestParseWithDefaults(T *testing.T) {

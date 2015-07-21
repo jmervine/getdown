@@ -5,6 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+
     <title>{{.Title}}</title>
 
     <link href="{{.Style}}" rel="stylesheet">
@@ -31,15 +33,19 @@
             <div class="col-md-3">
                 <h3>Navigation</h3>
                 <hr/>
-                {{ $path := .Path }}
+                {{ $path := .Markdown.Path }}
                 {{ range $dir, $files := .Files }}
-                <h5>{{$dir}}</h5>
+                <h5>{{ $dir }}</h5>
                 <ul>
                     {{ range $i, $file := $files }}
                     {{ $this := print $dir $file }}
                     <li{{ if eq $path $this }} class="active"{{ end }}><a href="{{$dir}}{{$file}}">{{$file}}</a></li>
+                    {{ else }}
+                    <i> no range $files </i>
                     {{ end }}
                 </ul>
+                {{ else }}
+                <i> no range .Files </i>
                 {{ end }}
             </div>
             <div class="col-md-9">
@@ -51,7 +57,7 @@
     <hr>
     <footer>
         <div class="text-center">
-            built by <a href="http://github.com/jmervine/getdown">gitdown</a>
+            rendered by <a href="http://github.com/jmervine/getdown">gitdown</a>
         </div>
     </footer>
   </body>

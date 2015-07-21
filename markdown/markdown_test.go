@@ -1,7 +1,7 @@
 package markdown
 
 import (
-	. "gopkg.in/jmervine/GoT.v1"
+	. "github.com/jmervine/getdown/Godeps/_workspace/src/gopkg.in/jmervine/GoT.v1"
 	"testing"
 
 	"github.com/jmervine/getdown/config"

@@ -1,10 +1,12 @@
 package cli
 
 import (
-	"gopkg.in/codegangsta/cli.v1"
-	"os"
+	//"os"
+	"path"
 
 	"github.com/jmervine/getdown/config"
+
+	"github.com/jmervine/getdown/Godeps/_workspace/src/gopkg.in/codegangsta/cli.v1"
 )
 
 // slightly modified version of
@@ -53,6 +55,12 @@ func Parse(args []string) *config.Config {
 			EnvVar: "GETDOWN_BASEDIR",
 		},
 		cli.StringFlag{
+			Name:   "static, s",
+			Value:  path.Join(config.Default.Basedir, "static"),
+			Usage:  "static file directory",
+			EnvVar: "GETDOWN_STATIC",
+		},
+		cli.StringFlag{
 			Name:   "index, i",
 			Value:  config.Default.Index,
 			Usage:  "root file default",
@@ -80,20 +88,16 @@ func Parse(args []string) *config.Config {
 
 	var cfg config.Config
 	app.Action = func(c *cli.Context) {
-		cfg = config.Config{
-			Addr:     c.String("addr"),
-			Port:     c.String("port"),
-			Basedir:  c.String("basedir"),
-			Index:    c.String("index"),
-			Template: c.String("template"),
-			Title:    c.String("title"),
-			Style:    c.String("style"),
-		}
-
-		if cfg.Addr == "" || cfg.Port == "" || cfg.Basedir == "" || cfg.Index == "" {
-			cli.ShowAppHelp(c)
-			os.Exit(1)
-		}
+		cfg = config.New(
+			c.String("addr"),
+			c.String("port"),
+			c.String("basedir"),
+			c.String("public"),
+			c.String("index"),
+			c.String("style"),
+			c.String("title"),
+			c.String("template"),
+		)
 	}
 
 	app.Run(args)
